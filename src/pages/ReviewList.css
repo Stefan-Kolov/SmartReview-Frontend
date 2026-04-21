@@ -1,0 +1,132 @@
+.review-list {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.review-list h2 {
+    font-size: 24px;
+    margin-bottom: 24px;
+    color: #1a1a1a;
+}
+
+.reviews-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.review-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.2s;
+}
+
+.review-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-failed {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.status-progress {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-pending {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.review-date {
+    font-size: 13px;
+    color: #666;
+}
+
+.repo-url {
+    font-size: 14px;
+    color: #1976d2;
+    margin-bottom: 16px;
+    word-break: break-all;
+}
+
+.score-display {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.score-good { color: #2e7d32; }
+.score-ok { color: #f57c00; }
+.score-poor { color: #c62828; }
+
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #666;
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.stat-value.bug { color: #d32f2f; }
+.stat-value.security { color: #f57c00; }
+.stat-value.style { color: #1976d2; }
+
+.error-message {
+    font-size: 13px;
+    color: #c62828;
+    background: #ffebee;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 12px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
+
+.loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+}
