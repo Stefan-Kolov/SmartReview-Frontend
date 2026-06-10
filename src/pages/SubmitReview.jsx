@@ -26,11 +26,12 @@ function SubmitReview({ onSubmitSuccess }) {
   return (
     <div className="submit-review">
       <h1>SmartReview - AI Code Analysis</h1>
+      <p className="submit-subtitle">Paste your repository link below and let AI scan for bugs, security leaks, and architecture issues.</p>
       <form onSubmit={handleSubmit}>
         <div className="input-group">
           <input
             type="text"
-            placeholder="Enter GitHub repository URL"
+            placeholder="Enter repository URL"
             value={repoUrl}
             onChange={(e) => setRepoUrl(e.target.value)}
             disabled={loading}
