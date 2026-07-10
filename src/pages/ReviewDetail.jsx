@@ -6,6 +6,7 @@ function ReviewDetail({ reviewId, onBack }) {
     const [review, setReview] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [showCode, setShowCode] = useState(false);
     const [filters, setFilters] = useState({
         category: 'ALL',
         severity: 'ALL'
@@ -14,6 +15,10 @@ function ReviewDetail({ reviewId, onBack }) {
     useEffect(() => {
         loadReview();
     }, [reviewId]);
+
+    useEffect(() => {
+        setShowCode(false);
+    }, [selectedFile]);
 
     const loadReview = async () => {
         try {
@@ -65,6 +70,10 @@ function ReviewDetail({ reviewId, onBack }) {
     }
 
     const filteredIssues = selectedFile ? filterIssues(selectedFile.issues) : [];
+
+    const allIssueLines = selectedFile
+        ? new Set(selectedFile.issues.filter(i => i.lineNumber).map(i => i.lineNumber))
+        : new Set();
 
     return (
         <div className="review-detail">
@@ -118,9 +127,25 @@ function ReviewDetail({ reviewId, onBack }) {
                             <div className="file-header">
                                 <h3>{selectedFile.filePath}</h3>
                                 <span className="language-badge">{selectedFile.language}</span>
+                                {allIssueLines.size > 0 && selectedFile.content && (
+                                    <button
+                                        className="show-code-btn"
+                                        onClick={() => setShowCode(prev => !prev)}
+                                    >
+                                        {showCode ? 'Hide Code' : 'Show Code'}
+                                    </button>
+                                )}
                             </div>
 
                             <div className="file-summary">{selectedFile.summary}</div>
+
+                            {showCode && selectedFile.content && (
+                                <CodeViewer
+                                    content={selectedFile.content}
+                                    issues={selectedFile.issues}
+                                    getCategoryIcon={getCategoryIcon}
+                                />
+                            )}
 
                             <div className="filters">
                                 <select
@@ -152,15 +177,15 @@ function ReviewDetail({ reviewId, onBack }) {
                                     filteredIssues.map((issue) => (
                                         <div key={issue.id} className="issue-card">
                                             <div className="issue-header">
-                        <span className="issue-category">
-                          {getCategoryIcon(issue.category)} {issue.category}
-                        </span>
+                                                <span className="issue-category">
+                                                    {getCategoryIcon(issue.category)} {issue.category}
+                                                </span>
                                                 <span
                                                     className="issue-severity"
                                                     style={{ color: getSeverityColor(issue.severity) }}
                                                 >
-                          {issue.severity}
-                        </span>
+                                                    {issue.severity}
+                                                </span>
                                                 {issue.lineNumber && (
                                                     <span className="issue-line">Line {issue.lineNumber}</span>
                                                 )}
@@ -181,6 +206,59 @@ function ReviewDetail({ reviewId, onBack }) {
                     )}
                 </div>
             </div>
+        </div>
+    );
+}
+
+function CodeViewer({ content, issues, getCategoryIcon }) {
+    const lines = content.split('\n');
+
+    const lineIssueMap = {};
+    issues.forEach(issue => {
+        if (issue.lineNumber) {
+            if (!lineIssueMap[issue.lineNumber]) lineIssueMap[issue.lineNumber] = [];
+            lineIssueMap[issue.lineNumber].push(issue);
+        }
+    });
+
+    const getLineStyle = (lineNum) => {
+        const lineIssues = lineIssueMap[lineNum] || [];
+        if (lineIssues.some(i => i.severity === 'HIGH'))   return { background: 'rgba(211,47,47,0.15)', borderLeft: '3px solid #d32f2f' };
+        if (lineIssues.some(i => i.severity === 'MEDIUM')) return { background: 'rgba(245,124,0,0.12)', borderLeft: '3px solid #f57c00' };
+        if (lineIssues.length > 0)                         return { background: 'rgba(25,118,210,0.10)', borderLeft: '3px solid #1976d2' };
+        return { borderLeft: '3px solid transparent' };
+    };
+
+    const getHintStyle = (lineIssues) => {
+        if (lineIssues.some(i => i.severity === 'HIGH'))   return { background: 'rgba(211,47,47,0.25)', borderLeft: '3px solid #d32f2f', color: '#ff8a80' };
+        if (lineIssues.some(i => i.severity === 'MEDIUM')) return { background: 'rgba(245,124,0,0.20)', borderLeft: '3px solid #f57c00', color: '#ffcc80' };
+        return { background: 'rgba(25,118,210,0.18)', borderLeft: '3px solid #1976d2', color: '#82b1ff' };
+    };
+
+    return (
+        <div className="code-viewer">
+            <pre>
+                {lines.map((line, index) => {
+                    const lineNum = index + 1;
+                    const lineIssues = lineIssueMap[lineNum] || [];
+
+                    return (
+                        <div key={lineNum}>
+                            <div className="code-line" style={getLineStyle(lineNum)}>
+                                <span className="line-number">{lineNum}</span>
+                                <span className="line-content">{line || ' '}</span>
+                            </div>
+                            {lineIssues.map((issue, i) => (
+                                <div key={i} className="line-annotation" style={getHintStyle(lineIssues)}>
+                                    <span className="annotation-icon">{getCategoryIcon(issue.category)}</span>
+                                    <span className="annotation-badge">{issue.severity}</span>
+                                    <span className="annotation-text">{issue.description}</span>
+                                </div>
+                            ))}
+                        </div>
+                    );
+                })}
+            </pre>
         </div>
     );
 }

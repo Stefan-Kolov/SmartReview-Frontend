@@ -219,3 +219,88 @@
 .issue-fix strong {
     color: var(--success-color);
 }
+
+.show-code-btn {
+    margin-left: auto;
+    padding: 6px 14px;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.show-code-btn:hover { background: #4f46e5; }
+
+.code-viewer {
+    margin: 16px 0;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    overflow: auto;
+    max-height: 500px;
+    background: #0d1117;
+}
+
+.code-viewer pre {
+    margin: 0;
+    padding: 0;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 13px;
+}
+
+.code-line {
+    display: flex;
+    align-items: center;
+    min-height: 22px;
+    padding: 1px 0;
+}
+
+.code-line:hover { background: #1e293b !important; }
+
+.line-number {
+    min-width: 48px;
+    padding: 0 12px;
+    color: #3d5166;
+    text-align: right;
+    user-select: none;
+    flex-shrink: 0;
+    font-size: 12px;
+}
+
+.line-content {
+    color: #cdd9e5;
+    white-space: pre;
+    flex: 1;
+    padding-right: 12px;
+}
+
+.line-annotation {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px 5px 60px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.annotation-icon {
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.annotation-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.08);
+    flex-shrink: 0;
+}
+
+.annotation-text {
+    line-height: 1.4;
+    opacity: 0.9;
+}
