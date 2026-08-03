@@ -17,8 +17,12 @@ reviewApi.interceptors.request.use((config) => {
 });
 
 export const reviewService = {
-    submitReview: async (repoUrl) => {
-        const response = await reviewApi.post('', { repoUrl });
+    submitReview: async (repoUrl, provider, apiKey) => {
+        const response = await reviewApi.post('', {
+            repoUrl,
+            provider,
+            apiKey: apiKey || null
+        });
         return response.data;
     },
 

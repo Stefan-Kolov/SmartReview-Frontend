@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import SubmitReview from './pages/SubmitReview';
 import ReviewList from './pages/ReviewList';
 import ReviewDetail from './pages/ReviewDetail';
@@ -6,7 +7,16 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import './App.css';
 
-function App() {
+function ThemeToggle() {
+    const { theme, toggleTheme } = useTheme();
+    return (
+        <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme">
+            {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
+    );
+}
+
+function AppContent() {
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
     const [authView, setAuthView] = useState('login');
     const [currentView, setCurrentView] = useState('submit');
@@ -24,9 +34,7 @@ function App() {
         setAuthView('login');
     };
 
-    const handleSubmitSuccess = () => {
-        setCurrentView('list');
-    };
+    const handleSubmitSuccess = () => setCurrentView('list');
 
     const handleSelectReview = (id) => {
         setSelectedReviewId(id);
@@ -74,10 +82,8 @@ function App() {
                         >
                             My Reviews
                         </button>
-                        <button
-                            onClick={handleLogout}
-                            className="logout-btn"
-                        >
+                        <ThemeToggle />
+                        <button onClick={handleLogout} className="logout-btn">
                             Logout
                         </button>
                     </div>
@@ -88,16 +94,22 @@ function App() {
                 {currentView === 'submit' && (
                     <SubmitReview onSubmitSuccess={handleSubmitSuccess} />
                 )}
-
                 {currentView === 'list' && (
                     <ReviewList onSelectReview={handleSelectReview} />
                 )}
-
                 {currentView === 'detail' && selectedReviewId && (
                     <ReviewDetail reviewId={selectedReviewId} onBack={handleBackToList} />
                 )}
             </main>
         </div>
+    );
+}
+
+function App() {
+    return (
+        <ThemeProvider>
+            <AppContent />
+        </ThemeProvider>
     );
 }
 

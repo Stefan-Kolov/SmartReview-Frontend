@@ -1,3 +1,97 @@
+/* ── Theme variables ───────────────────────── */
+:root[data-theme="light"] {
+  --bg-main:        #F5F6FA;
+  --bg-surface:     #FFFFFF;
+  --border-color:   #E2E5ED;
+  --text-primary:   #1A1F36;
+  --text-secondary: #4B5563;
+  --text-muted:     #6B7280;
+  --accent:         #3B5BDB;
+
+  --status-completed-bg:   #ECFDF3;
+  --status-completed-text: #166534;
+  --status-failed-bg:      #FEF2F2;
+  --status-failed-text:    #991B1B;
+  --status-progress-bg:    #EFF6FF;
+  --status-progress-text:  #1D4ED8;
+  --status-pending-bg:     #FFFBEB;
+  --status-pending-text:   #92400E;
+
+  --score-good:    #166534;
+  --score-ok:      #92400E;
+  --score-poor:    #991B1B;
+
+  --stat-bug:      #991B1B;
+  --stat-security: #92400E;
+  --stat-style:    #1D4ED8;
+
+  --card-hover-border: #3B5BDB;
+  --card-hover-shadow: rgba(59, 91, 219, 0.08);
+
+  --navbar-bg:     #FFFFFF;
+  --navbar-border: #E2E5ED;
+}
+
+:root[data-theme="dark"] {
+  --bg-main:        #0f172a;
+  --bg-surface:     #1e293b;
+  --border-color:   #334155;
+  --text-primary:   #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted:     #64748b;
+  --accent:         #3b82f6;
+
+  --status-completed-bg:   rgba(16,185,129,0.1);
+  --status-completed-text: #34d399;
+  --status-failed-bg:      rgba(239,68,68,0.1);
+  --status-failed-text:    #f87171;
+  --status-progress-bg:    rgba(59,130,246,0.1);
+  --status-progress-text:  #60a5fa;
+  --status-pending-bg:     rgba(245,158,11,0.1);
+  --status-pending-text:   #fbbf24;
+
+  --score-good:    #34d399;
+  --score-ok:      #fbbf24;
+  --score-poor:    #f87171;
+
+  --stat-bug:      #f87171;
+  --stat-security: #fbbf24;
+  --stat-style:    #60a5fa;
+
+  --card-hover-border: rgba(59,130,246,0.5);
+  --card-hover-shadow: rgba(0,0,0,0.5);
+
+  --navbar-bg:     #1e293b;
+  --navbar-border: #334155;
+}
+
+/* ── Toggle button ─────────────────────────── */
+.theme-toggle {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: border-color 0.2s;
+  color: var(--text-primary);
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+}
+
+/* ── Navbar ────────────────────────────────── */
+.navbar {
+  background: var(--navbar-bg);
+  border-bottom: 1px solid var(--navbar-border);
+}
+
+.app {
+  background: var(--bg-main);
+  min-height: 100vh;
+  color: var(--text-primary);
+}
 :root {
   --bg-main: #0b0f19;
   --bg-surface: #111827;

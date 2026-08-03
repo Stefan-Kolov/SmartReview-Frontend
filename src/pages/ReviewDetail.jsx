@@ -75,11 +75,28 @@ function ReviewDetail({ reviewId, onBack }) {
         ? new Set(selectedFile.issues.filter(i => i.lineNumber).map(i => i.lineNumber))
         : new Set();
 
+    const getProviderLabel = (provider) => {
+        const labels = {
+            GROQ:      '⚡ Groq — Llama 3.3 70B',
+            ANTHROPIC: '🧠 Anthropic — Claude Haiku',
+            OPENAI:    '🤖 OpenAI — GPT-4o Mini',
+            GEMINI:    '✨ Google — Gemini 1.5 Flash'
+        };
+        return labels[provider] || provider;
+    };
+
     return (
         <div className="review-detail">
             <div className="detail-header">
                 <button onClick={onBack} className="back-button">← Back to Reviews</button>
-                <h2>{review.repoUrl}</h2>
+                <div className="header-title">
+                    <h2>{review.repoUrl}</h2>
+                        {review.provider && (
+                            <span className="provider-badge">
+                                {getProviderLabel(review.provider)}
+                            </span>
+                    )}
+                </div>
                 <div className="header-stats">
                     <div className="stat-box">
                         <div className="stat-number">{review.overallScore}/100</div>
