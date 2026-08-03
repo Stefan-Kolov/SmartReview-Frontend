@@ -71,7 +71,7 @@ function ReviewList({ onSelectReview }) {
                 </span>
                             </div>
 
-                            <div className="repo-url">{review.repoUrl}</div>
+                            <div className="repo-url">{review.repoUrl.split('/').slice(-2).join('/')}</div>
 
                             {review.status === 'COMPLETED' && (
                                 <>

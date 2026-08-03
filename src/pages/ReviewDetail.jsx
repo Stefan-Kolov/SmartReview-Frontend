@@ -90,15 +90,15 @@ function ReviewDetail({ reviewId, onBack }) {
             <div className="detail-header">
                 <button onClick={onBack} className="back-button">← Back to Reviews</button>
                 <div className="header-title">
-                    <h2>{review.repoUrl}</h2>
-                        {review.provider && (
-                            <span className="provider-badge">
+                    <h2>{review.repoUrl.split('/').slice(-2).join('/')}</h2>
+                    {review.provider && (
+                        <span className="provider-badge">
                                 {getProviderLabel(review.provider)}
                             </span>
                     )}
                 </div>
                 <div className="header-stats">
-                    <div className="stat-box">
+                <div className="stat-box">
                         <div className="stat-number">{review.overallScore}/100</div>
                         <div className="stat-label">Overall Score</div>
                     </div>
@@ -130,7 +130,7 @@ function ReviewDetail({ reviewId, onBack }) {
                             className={`file-item ${selectedFile?.id === file.id ? 'active' : ''}`}
                             onClick={() => setSelectedFile(file)}
                         >
-                            <div className="file-name">{file.filePath}</div>
+                            <div className="file-name">{file.filePath.split(/[/\\]/).pop()}</div>
                             <div className="file-score" style={{ color: file.fileScore >= 80 ? '#2e7d32' : file.fileScore >= 60 ? '#f57c00' : '#d32f2f' }}>
                                 {file.fileScore}
                             </div>
