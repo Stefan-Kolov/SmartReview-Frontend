@@ -192,3 +192,23 @@ form > button[type="submit"]:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
+
+.advanced-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+}
+
+.advanced-toggle:hover {
+    border-color: var(--accent);
+    color: var(--text-primary);
+}

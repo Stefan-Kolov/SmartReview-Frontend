@@ -15,6 +15,7 @@ function SubmitReview({ onSubmitSuccess }) {
   const [apiKey, setApiKey] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const selectedProvider = PROVIDERS.find(p => p.value === provider);
 
@@ -47,7 +48,7 @@ function SubmitReview({ onSubmitSuccess }) {
             <label>Repository URL</label>
             <input
                 type="text"
-                placeholder="https://github.com/username/repository"
+                placeholder="GitHub, GitLab or Bitbucket repository URL"
                 value={repoUrl}
                 onChange={(e) => setRepoUrl(e.target.value)}
                 disabled={loading}
@@ -71,18 +72,26 @@ function SubmitReview({ onSubmitSuccess }) {
             </div>
           </div>
 
-          <div className="form-group">
-            <label>
-              API Key
-            </label>
-            <input
-                type="password"
-                placeholder={selectedProvider.placeholder}
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                disabled={loading}
-            />
+          <div className="advanced-toggle" onClick={() => setShowAdvanced(prev => !prev)}>
+            <span>Advanced options</span>
+            <span>{showAdvanced ? '▲' : '▼'}</span>
           </div>
+
+          {showAdvanced && (
+              <div className="form-group">
+                <label>
+                  API Key
+                  <span className="key-hint"> — leave empty to use system key</span>
+                </label>
+                <input
+                    type="password"
+                    placeholder={selectedProvider.placeholder}
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                    disabled={loading}
+                />
+              </div>
+          )}
 
           {error && <div className="error">{error}</div>}
 
