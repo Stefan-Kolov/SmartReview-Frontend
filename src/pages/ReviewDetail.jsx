@@ -88,17 +88,19 @@ function ReviewDetail({ reviewId, onBack }) {
     return (
         <div className="review-detail">
             <div className="detail-header">
-                <button onClick={onBack} className="back-button">← Back to Reviews</button>
-                <div className="header-title">
-                    <h2>{review.repoUrl.split('/').slice(-2).join('/')}</h2>
-                    {review.provider && (
-                        <span className="provider-badge">
+                <div className="header-top">
+                    <button onClick={onBack} className="back-button">← Back to Reviews</button>
+                        {review.provider && (
+                            <span className="provider-badge">
                                 {getProviderLabel(review.provider)}
                             </span>
-                    )}
+                        )}
+                </div>
+                <div className="header-title">
+                    <h2>{review.repoUrl.split('/').slice(-2).join('/')}</h2>
                 </div>
                 <div className="header-stats">
-                <div className="stat-box">
+                    <div className="stat-box">
                         <div className="stat-number">{review.overallScore}/100</div>
                         <div className="stat-label">Overall Score</div>
                     </div>
@@ -118,6 +120,16 @@ function ReviewDetail({ reviewId, onBack }) {
                         <div className="stat-number style-color">{review.totalStyleIssues}</div>
                         <div className="stat-label">Style</div>
                     </div>
+                    {review.durationSeconds && (
+                        <div className="stat-box">
+                            <div className="stat-number">
+                                {review.durationSeconds >= 60
+                                    ? `${Math.floor(review.durationSeconds / 60)}m ${review.durationSeconds % 60}s`
+                                    : `${review.durationSeconds}s`}
+                            </div>
+                            <div className="stat-label">Duration</div>
+                        </div>
+                    )}
                 </div>
             </div>
 

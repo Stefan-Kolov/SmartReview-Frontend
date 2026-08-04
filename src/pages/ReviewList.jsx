@@ -67,8 +67,15 @@ function ReviewList({ onSelectReview }) {
                   {badge.label}
                 </span>
                                 <span className="review-date">
-                  {new Date(review.createdAt).toLocaleDateString()}
-                </span>
+                                    {new Date(review.createdAt).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric'
+                                    })} {new Date(review.createdAt).toLocaleTimeString('en-GB', {
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit'
+                                    })}
+                                </span>
                             </div>
 
                             <div className="repo-url">{review.repoUrl.split('/').slice(-2).join('/')}</div>

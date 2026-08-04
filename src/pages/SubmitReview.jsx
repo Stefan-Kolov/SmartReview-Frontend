@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { reviewService } from '../services/reviewService';
 import './SubmitReview.css';
+import ReviewProgress from './ReviewProgress';
 
 const PROVIDERS = [
   { value: 'GROQ',      label: 'Groq',      model: 'Llama 3.3 70B',    placeholder: 'gsk_...' },
@@ -16,6 +17,7 @@ function SubmitReview({ onSubmitSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [pendingJobId, setPendingJobId] = useState(null);
 
   const selectedProvider = PROVIDERS.find(p => p.value === provider);
 
@@ -28,13 +30,27 @@ function SubmitReview({ onSubmitSuccess }) {
       const result = await reviewService.submitReview(repoUrl, provider, apiKey);
       setRepoUrl('');
       setApiKey('');
-      onSubmitSuccess(result);
+      setPendingJobId(result.id);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to submit review');
     } finally {
       setLoading(false);
     }
   };
+
+  const handleReviewComplete = () => {
+    setPendingJobId(null);
+    onSubmitSuccess();
+  };
+
+  if (pendingJobId) {
+    return (
+        <ReviewProgress
+            jobId={pendingJobId}
+            onComplete={handleReviewComplete}
+        />
+    );
+  }
 
   return (
       <div className="submit-review">
@@ -95,14 +111,8 @@ function SubmitReview({ onSubmitSuccess }) {
 
           {error && <div className="error">{error}</div>}
 
-          {loading && (
-              <div className="loading-message">
-                This may take a few minutes. The AI is analyzing your repository...
-              </div>
-          )}
-
           <button type="submit" disabled={loading}>
-            {loading ? 'Analyzing...' : 'Review Code'}
+            {loading ? 'Submitting...' : 'Review Code'}
           </button>
         </form>
       </div>

@@ -19,7 +19,6 @@
     font-size: 0.85rem;
     font-weight: 500;
     cursor: pointer;
-    margin-bottom: 1.25rem;
     padding: 6px 14px;
     border-radius: 6px;
     transition: all 0.2s;
@@ -321,4 +320,11 @@
     border: 1px solid var(--border-color);
     color: var(--text-secondary);
     white-space: nowrap;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
 }
