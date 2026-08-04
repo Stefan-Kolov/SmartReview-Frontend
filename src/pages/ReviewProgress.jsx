@@ -47,21 +47,26 @@ function ReviewProgress({ jobId, onComplete }) {
 
     return (
         <div className="review-progress">
-            <div className="progress-status">{getStatusLabel()}</div>
+            <div className="progress-status">
+                {getStatusLabel()}
+            </div>
 
             {progress.total > 0 && (
                 <>
-                    <div className="progress-bar-track">
-                        <div
-                            className="progress-bar-fill"
-                            style={{ width: `${progress.percent}%` }}
-                        />
+                    <div className="progress-bar-row">
+                        <div className="progress-bar-track">
+                            <div
+                                className="progress-bar-fill"
+                                style={{ width: `${progress.percent}%` }}
+                            />
+                        </div>
+                        <div className="spinner" />
                     </div>
 
                     <div className="progress-info">
-                        <span className="progress-count">
-                            {progress.processed}/{progress.total} files
-                        </span>
+                    <span className="progress-count">
+                        {progress.processed}/{progress.total} files
+                    </span>
                         <span className="progress-percent">{progress.percent}%</span>
                     </div>
 
@@ -72,8 +77,11 @@ function ReviewProgress({ jobId, onComplete }) {
             )}
 
             {progress.total === 0 && (
-                <div className="progress-bar-track">
-                    <div className="progress-bar-indeterminate" />
+                <div className="progress-bar-row">
+                    <div className="progress-bar-track">
+                        <div className="progress-bar-indeterminate" />
+                    </div>
+                    <div className="spinner" />
                 </div>
             )}
         </div>

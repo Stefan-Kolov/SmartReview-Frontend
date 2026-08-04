@@ -34,7 +34,14 @@ function AppContent() {
         setAuthView('login');
     };
 
-    const handleSubmitSuccess = () => setCurrentView('list');
+    const handleSubmitSuccess = (jobId) => {
+        if (jobId) {
+            setSelectedReviewId(jobId);
+            setCurrentView('detail');
+        } else {
+            setCurrentView('list');
+        }
+    };
 
     const handleSelectReview = (id) => {
         setSelectedReviewId(id);

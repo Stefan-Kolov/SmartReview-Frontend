@@ -38,9 +38,9 @@ function SubmitReview({ onSubmitSuccess }) {
     }
   };
 
-  const handleReviewComplete = () => {
+  const handleReviewComplete = (jobId) => {
     setPendingJobId(null);
-    onSubmitSuccess();
+    onSubmitSuccess(jobId);
   };
 
   if (pendingJobId) {
