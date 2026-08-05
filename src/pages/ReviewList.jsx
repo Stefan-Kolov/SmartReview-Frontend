@@ -5,6 +5,7 @@ import './ReviewList.css';
 function ReviewList({ onSelectReview }) {
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
     useEffect(() => {
         loadReviews();
@@ -23,10 +24,10 @@ function ReviewList({ onSelectReview }) {
 
     const getStatusBadge = (status) => {
         const badges = {
-            COMPLETED: { className: 'status-completed', label: 'Completed' },
-            FAILED: { className: 'status-failed', label: 'Failed' },
-            IN_PROGRESS: { className: 'status-progress', label: 'In Progress' },
-            PENDING: { className: 'status-pending', label: 'Pending' }
+            COMPLETED:   { className: 'status-completed', label: 'Completed' },
+            FAILED:      { className: 'status-failed',    label: 'Failed' },
+            IN_PROGRESS: { className: 'status-progress',  label: 'In Progress' },
+            PENDING:     { className: 'status-pending',   label: 'Pending' }
         };
         return badges[status] || badges.PENDING;
     };
@@ -37,9 +38,17 @@ function ReviewList({ onSelectReview }) {
         return 'score-poor';
     };
 
-    if (loading) {
-        return <div className="loading">Loading reviews...</div>;
-    }
+    const handleDelete = async (id) => {
+        try {
+            await reviewService.deleteReview(id);
+            setReviews(prev => prev.filter(r => r.id !== id));
+            setDeleteConfirmId(null);
+        } catch (err) {
+            console.error('Failed to delete review:', err);
+        }
+    };
+
+    if (loading) return <div className="loading">Loading reviews...</div>;
 
     if (reviews.length === 0) {
         return (
@@ -51,6 +60,23 @@ function ReviewList({ onSelectReview }) {
 
     return (
         <div className="review-list">
+            {deleteConfirmId && (
+                <div className="modal-overlay" onClick={() => setDeleteConfirmId(null)}>
+                    <div className="modal" onClick={e => e.stopPropagation()}>
+                        <h3>Delete Review</h3>
+                        <p>Are you sure you want to delete this review? This action cannot be undone.</p>
+                        <div className="modal-actions">
+                            <button className="modal-cancel" onClick={() => setDeleteConfirmId(null)}>
+                                Cancel
+                            </button>
+                            <button className="modal-confirm" onClick={() => handleDelete(deleteConfirmId)}>
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <h2>Recent Reviews</h2>
             <div className="reviews-grid">
                 {reviews.map((review) => {
@@ -63,22 +89,37 @@ function ReviewList({ onSelectReview }) {
                             style={{ cursor: review.status === 'COMPLETED' ? 'pointer' : 'default' }}
                         >
                             <div className="review-header">
-                <span className={`status-badge ${badge.className}`}>
-                  {badge.label}
-                </span>
+                                <span className={`status-badge ${badge.className}`}>
+                                    {badge.label}
+                                </span>
                                 <span className="review-date">
                                     {new Date(review.createdAt).toLocaleDateString('en-GB', {
-                                        day: '2-digit',
-                                        month: '2-digit',
-                                        year: 'numeric'
-                                    })} {new Date(review.createdAt).toLocaleTimeString('en-GB', {
-                                                                    hour: '2-digit',
-                                                                    minute: '2-digit'
-                                    })}
+                                        day: '2-digit', month: '2-digit', year: 'numeric'
+                                    })} — {new Date(review.createdAt).toLocaleTimeString('en-GB', {
+                                    hour: '2-digit', minute: '2-digit'
+                                })}
                                 </span>
+                                <button
+                                    className="delete-btn"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setDeleteConfirmId(review.id);
+                                    }}
+                                    title="Delete review"
+                                >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" strokeWidth="2">
+                                        <polyline points="3 6 5 6 21 6"/>
+                                        <path d="M19 6l-1 14H6L5 6"/>
+                                        <path d="M10 11v6M14 11v6"/>
+                                        <path d="M9 6V4h6v2"/>
+                                    </svg>
+                                </button>
                             </div>
 
-                            <div className="repo-url">{review.repoUrl.split('/').slice(-2).join('/')}</div>
+                            <div className="repo-url">
+                                {review.repoUrl.split('/').slice(-2).join('/')}
+                            </div>
 
                             {review.status === 'COMPLETED' && (
                                 <>
@@ -107,7 +148,9 @@ function ReviewList({ onSelectReview }) {
                             )}
 
                             {review.status === 'FAILED' && (
-                                <div className="error-message">{review.errorMessage}</div>
+                                <div className="error-message">
+                                    Review failed. Please check your API key and try again.
+                                </div>
                             )}
                         </div>
                     );

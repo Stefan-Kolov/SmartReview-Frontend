@@ -35,5 +35,9 @@ export const reviewService = {
 
         const response = await reviewApi.get(`/${id}`);
         return response.data;
+    },
+
+    deleteReview: async (id) => {
+        await reviewApi.delete(`/${id}`);
     }
 };
