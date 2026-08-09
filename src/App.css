@@ -267,3 +267,19 @@ input:focus, select:focus {
   border-color: rgba(59, 91, 219, 0.3);
   color: var(--accent);
 }
+
+.login-btn {
+  padding: 0.6rem 1.2rem;
+  background: var(--accent) !important;
+  color: white !important;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.login-btn:hover {
+  opacity: 0.9;
+}
