@@ -212,3 +212,9 @@ form > button[type="submit"]:disabled {
     border-color: var(--accent);
     color: var(--text-primary);
 }
+
+:root[data-theme="light"] .submit-review h1 {
+    background: none;
+    -webkit-text-fill-color: var(--text-primary);
+    color: var(--text-primary);
+}

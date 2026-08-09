@@ -34,7 +34,7 @@ function AppContent() {
 
     const handleLoginSuccess = () => {
         setIsAuthenticated(true);
-        setCurrentView('submit');
+        setCurrentView('home');
     };
 
     const handleLogout = () => {

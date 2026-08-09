@@ -328,3 +328,18 @@
     align-items: center;
     margin-bottom: 16px;
 }
+
+:root[data-theme="light"] .issue-category {
+    background: #F1F5F9;
+    border-color: #E2E5ED;
+    color: #1A1F36;
+}
+
+:root[data-theme="light"] .language-badge {
+    background: rgba(59, 91, 219, 0.08);
+    color: #3B5BDB;
+}
+
+:root[data-theme="light"] .show-code-btn {
+    background: #3B5BDB;
+}

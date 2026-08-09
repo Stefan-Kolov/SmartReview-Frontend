@@ -247,3 +247,23 @@ input:focus, select:focus {
   align-items: center;
   justify-content: center;
 }
+
+:root[data-theme="light"] .navbar {
+  background: var(--navbar-bg);
+  backdrop-filter: none;
+}
+
+:root[data-theme="light"] .nav-links button {
+  color: var(--text-secondary);
+}
+
+:root[data-theme="light"] .nav-links button:hover {
+  background: var(--bg-main);
+  color: var(--text-primary);
+}
+
+:root[data-theme="light"] .nav-links button.active {
+  background: rgba(59, 91, 219, 0.08);
+  border-color: rgba(59, 91, 219, 0.3);
+  color: var(--accent);
+}

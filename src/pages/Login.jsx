@@ -14,7 +14,7 @@ export default function Login({ onLoginSuccess, onNavigateToRegister }) {
             await login(username, password);
             onLoginSuccess();
         } catch (err) {
-            setError(err.response?.data?.error || 'Login failed');
+            setError(err.response?.data?.message || 'Login failed');
         }
     };
 
