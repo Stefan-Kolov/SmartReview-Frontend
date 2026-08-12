@@ -16,7 +16,7 @@ function ReviewProgress({ jobId, onComplete }) {
 
         const token = localStorage.getItem('token');
         const es = new EventSource(
-            `http://localhost:8080/api/reviews/${jobId}/progress?token=${token}`
+            `${process.env.REACT_APP_API_URL}/api/reviews/${jobId}/progress?token=${token}`
         );
         eventSourceRef.current = es;
 

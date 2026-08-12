@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api/auth';
+const AUTH_URL = `${process.env.REACT_APP_API_URL}/api/auth`;
 
 export const register = async (username, password, name, surname, email) => {
-    const response = await axios.post(`${API_URL}/register`, {
+    const response = await axios.post(`${AUTH_URL}/register`, {
         username, password, name, surname, email
     });
     if (response.data.token) {
@@ -14,7 +14,7 @@ export const register = async (username, password, name, surname, email) => {
 };
 
 export const login = async (username, password) => {
-    const response = await axios.post(`${API_URL}/login`, { username, password });
+    const response = await axios.post(`${AUTH_URL}/login`, { username, password });
     if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('username', response.data.username);
@@ -27,10 +27,5 @@ export const logout = () => {
     localStorage.removeItem('username');
 };
 
-export const getCurrentUser = () => {
-    return localStorage.getItem('username');
-};
-
-export const getToken = () => {
-    return localStorage.getItem('token');
-};
+export const getCurrentUser = () => localStorage.getItem('username');
+export const getToken = () => localStorage.getItem('token');

@@ -1,31 +1,17 @@
-import axios from 'axios';
-
-const API_BASE_URL = 'http://localhost:8080/api/users';
-
-const userApi = axios.create({
-    baseURL: API_BASE_URL
-});
-
-userApi.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-});
+import api from './api';
 
 export const userService = {
     getProfile: async () => {
-        const response = await userApi.get('/me');
+        const response = await api.get('/api/users/me');
         return response.data;
     },
 
     updateProfile: async (data) => {
-        const response = await userApi.put('/me', data);
+        const response = await api.put('/api/users/me', data);
         return response.data;
     },
 
     changePassword: async (data) => {
-        await userApi.put('/me/password', data);
+        await api.put('/api/users/me/password', data);
     }
 };
