@@ -91,11 +91,11 @@ function ReviewDetail({ reviewId, onBack }) {
             <div className="detail-header">
                 <div className="header-top">
                     <button onClick={onBack} className="back-button">← Back to Reviews</button>
-                        {review.provider && (
-                            <span className="provider-badge">
+                    {review.provider && (
+                        <span className="provider-badge">
                                 {getProviderLabel(review.provider)}
                             </span>
-                        )}
+                    )}
                 </div>
                 <div className="header-title">
                     <h2>{review.repoUrl.split('/').slice(-2).join('/')}</h2>
@@ -155,7 +155,7 @@ function ReviewDetail({ reviewId, onBack }) {
                     {selectedFile ? (
                         <>
                             <div className="file-header">
-                                <h3>{selectedFile.filePath}</h3>
+                                <h3>{selectedFile.filePath.split(/[/\\]/).pop()}</h3>
                                 <span className="language-badge">{selectedFile.language}</span>
                                 {allIssueLines.size > 0 && selectedFile.content && (
                                     <button
