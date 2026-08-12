@@ -14,6 +14,7 @@ function ReviewDetail({ reviewId, onBack }) {
 
     useEffect(() => {
         loadReview();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [reviewId]);
 
     useEffect(() => {

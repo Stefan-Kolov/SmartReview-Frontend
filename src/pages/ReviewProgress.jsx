@@ -37,6 +37,7 @@ function ReviewProgress({ jobId, onComplete }) {
         es.onerror = () => es.close();
 
         return () => es.close();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [jobId]);
 
     const getStatusLabel = () => {
