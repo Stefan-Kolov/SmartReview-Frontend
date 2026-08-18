@@ -24,9 +24,16 @@ function ReviewDetail({ reviewId, onBack }) {
     const loadReview = async () => {
         try {
             const data = await reviewService.getReviewById(reviewId);
-            setReview(data);
-            if (data.fileReviews && data.fileReviews.length > 0) {
-                setSelectedFile(data.fileReviews[0]);
+            const sorted = {
+                ...data,
+                fileReviews: [...(data.fileReviews || [])].sort((a, b) =>
+                    a.filePath.split(/[/\\]/).pop().localeCompare(b.filePath.split(/[/\\]/).pop())
+                )
+            };
+
+            setReview(sorted);
+            if (sorted.fileReviews && sorted.fileReviews.length > 0) {
+                setSelectedFile(sorted.fileReviews[0]);
             }
         } catch (err) {
             console.error('Failed to load review:', err);
