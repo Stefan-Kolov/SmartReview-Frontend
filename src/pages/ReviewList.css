@@ -227,3 +227,44 @@
     color: var(--text-secondary);
     text-align: center;
 }
+
+.empty-state {
+    text-align: center;
+    padding: 80px 24px;
+    color: var(--text-secondary);
+}
+
+.empty-icon {
+    font-size: 3rem;
+}
+
+.empty-state h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.loading {
+    text-align: center;
+    padding: 80px 24px;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.loading::before {
+    content: '⏳';
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 16px;
+}
+
+.empty-icon svg {
+    color: var(--text-muted);
+    opacity: 0.5;
+}

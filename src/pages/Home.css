@@ -204,3 +204,28 @@
     -webkit-text-fill-color: var(--text-primary);
     color: var(--text-primary);
 }
+
+.home-cta-group {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-cta-secondary {
+    padding: 13px 32px;
+    background: transparent;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.home-cta-secondary:hover {
+    background: var(--accent);
+    color: white;
+    transform: translateY(-2px);
+}

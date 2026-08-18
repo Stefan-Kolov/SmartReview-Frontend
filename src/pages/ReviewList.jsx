@@ -48,12 +48,24 @@ function ReviewList({ onSelectReview }) {
         }
     };
 
-    if (loading) return <div className="loading">Loading reviews...</div>;
+    if (loading) return (
+        <div className="review-list">
+            <div className="loading">Loading your reviews...</div>
+        </div>
+    );
 
     if (reviews.length === 0) {
         return (
             <div className="empty-state">
-                <p>No reviews yet. Submit a repository to get started!</p>
+                <div className="empty-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M9 17H7A5 5 0 0 1 7 7h2"/>
+                        <path d="M15 7h2a5 5 0 1 1 0 10h-2"/>
+                        <line x1="8" y1="12" x2="16" y2="12"/>
+                    </svg>
+                </div>
+                <h3>No reviews yet</h3>
+                <p>Submit a repository URL to get your first AI-powered code review.</p>
             </div>
         );
     }

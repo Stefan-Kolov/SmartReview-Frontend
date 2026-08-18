@@ -1,26 +1,34 @@
 import './Home.css';
 
-function Home({ onStartReview }) {
+function Home({ onStartReview, onRegister, isAuthenticated }) {
     return (
         <div className="home">
             <div className="home-hero">
                 <div className="home-badge">AI-Powered Code Review</div>
-                <h1>Review your code.<br />Ship with confidence.</h1>
+                <h1>Review your code.<br/>Ship with confidence.</h1>
                 <p>
                     SmartReview analyzes your GitHub, GitLab or Bitbucket repository
                     using state-of-the-art AI models to detect bugs, security vulnerabilities,
                     and style issues — in seconds.
                 </p>
-                <button className="home-cta" onClick={onStartReview}>
-                    Start Review →
-                </button>
+                <div className="home-cta-group">
+                    <button className="home-cta" onClick={onStartReview}>
+                        Start Review →
+                    </button>
+                    {!isAuthenticated && (
+                        <button className="home-cta-secondary" onClick={onRegister}>
+                            Create Account
+                        </button>
+                    )}
+                </div>
             </div>
 
             <div className="home-features">
                 <div className="home-feature-card">
                     <div className="feature-icon">🐛</div>
                     <h3>Bug Detection</h3>
-                    <p>Finds logic errors, null pointer risks, off-by-one errors and incorrect error handling before they reach production.</p>
+                    <p>Finds logic errors, null pointer risks, off-by-one errors and incorrect error handling before
+                        they reach production.</p>
                 </div>
                 <div className="home-feature-card">
                     <div className="feature-icon">🔒</div>

@@ -73,6 +73,11 @@ function AppContent() {
         }
     };
 
+    const handleRegister = () => {
+        setAuthView('register');
+        setCurrentView('auth');
+    };
+
     if (currentView === 'auth') {
         return (
             <div className="app">
@@ -80,11 +85,13 @@ function AppContent() {
                     <Login
                         onLoginSuccess={handleLoginSuccess}
                         onNavigateToRegister={() => setAuthView('register')}
+                        onBack={() => setCurrentView('home')}
                     />
                 ) : (
                     <Register
                         onRegisterSuccess={handleLoginSuccess}
                         onNavigateToLogin={() => setAuthView('login')}
+                        onBack={() => setCurrentView('home')}
                     />
                 )}
             </div>
@@ -153,7 +160,11 @@ function AppContent() {
 
             <main className="main-content">
                 {currentView === 'home' && (
-                    <Home onStartReview={handleStartReview} />
+                    <Home
+                        onStartReview={handleStartReview}
+                        onRegister={!isAuthenticated ? handleRegister : null}
+                        isAuthenticated={isAuthenticated}
+                    />
                 )}
                 {currentView === 'submit' && isAuthenticated && (
                     <SubmitReview onSubmitSuccess={handleSubmitSuccess} />
