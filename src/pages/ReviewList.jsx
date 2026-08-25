@@ -135,15 +135,11 @@ function ReviewList({ onSelectReview }) {
                         </button>
                         {availableProviders.map((p) => {
                             const meta = PROVIDER_META[p] || { label: p, icon: '' };
-                            const count = reviews.filter(r => r.provider === p).length;
-                            const disabled = count === 0;
                             return (
                                 <button
                                     key={p}
-                                    className={`filter-pill ${providerFilter === p ? 'active' : ''} ${disabled ? 'disabled' : ''}`}
-                                    onClick={() => !disabled && setProviderFilter(p)}
-                                    disabled={disabled}
-                                    title={disabled ? 'No reviews with this provider yet' : undefined}
+                                    className={`filter-pill ${providerFilter === p ? 'active' : ''}`}
+                                    onClick={() => setProviderFilter(p)}
                                 >
                                     {meta.icon} {meta.label}
                                 </button>
@@ -167,7 +163,7 @@ function ReviewList({ onSelectReview }) {
             {visibleReviews.length === 0 ? (
                 <div className="empty-state">
                     <h3>No reviews match this filter</h3>
-                    <p>Try a different provider or clear the filter.</p>
+                    <p>You don't have any reviews from this provider yet.</p>
                 </div>
             ) : (
                 <div className="reviews-grid">

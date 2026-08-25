@@ -25,6 +25,7 @@ function AppContent() {
     const [currentView, setCurrentView] = useState('home');
     const [selectedReviewId, setSelectedReviewId] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -43,6 +44,7 @@ function AppContent() {
         setIsAuthenticated(false);
         setCurrentUser(null);
         setCurrentView('home');
+        setShowLogoutConfirm(false);
     };
 
     const handleSubmitSuccess = (jobId) => {
@@ -100,6 +102,23 @@ function AppContent() {
 
     return (
         <div className="app">
+            {showLogoutConfirm && (
+                <div className="modal-overlay" onClick={() => setShowLogoutConfirm(false)}>
+                    <div className="modal" onClick={e => e.stopPropagation()}>
+                        <h3>Log Out</h3>
+                        <p>Are you sure you want to log out?</p>
+                        <div className="modal-actions">
+                            <button className="modal-cancel" onClick={() => setShowLogoutConfirm(false)}>
+                                Cancel
+                            </button>
+                            <button className="modal-confirm" onClick={handleLogout}>
+                                Log Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <nav className="navbar">
                 <div className="nav-content">
                     <div
@@ -136,7 +155,7 @@ function AppContent() {
                                     </button>
                                 )}
                                 <ThemeToggle />
-                                <button onClick={handleLogout} className="logout-btn">
+                                <button onClick={() => setShowLogoutConfirm(true)} className="logout-btn">
                                     Logout
                                 </button>
                             </>
