@@ -1,11 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { reviewService } from '../services/reviewService';
 import './ReviewList.css';
+
+const PROVIDER_META = {
+    GROQ:      { label: 'Groq',      icon: '⚡' },
+    ANTHROPIC: { label: 'Anthropic', icon: '🧠' },
+    OPENAI:    { label: 'OpenAI',    icon: '🤖' },
+    GEMINI:    { label: 'Google',    icon: '✨' }
+};
 
 function ReviewList({ onSelectReview }) {
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+    const [providerFilter, setProviderFilter] = useState('ALL');
+    const [sortBy, setSortBy] = useState('NEWEST');
 
     useEffect(() => {
         loadReviews();
@@ -48,6 +57,30 @@ function ReviewList({ onSelectReview }) {
         }
     };
 
+    const availableProviders = Object.keys(PROVIDER_META);
+
+    const visibleReviews = useMemo(() => {
+        let result = providerFilter === 'ALL'
+            ? [...reviews]
+            : reviews.filter(r => r.provider === providerFilter);
+
+        result.sort((a, b) => {
+            switch (sortBy) {
+                case 'OLDEST':
+                    return new Date(a.createdAt) - new Date(b.createdAt);
+                case 'SCORE_HIGH':
+                    return (b.overallScore ?? -1) - (a.overallScore ?? -1);
+                case 'SCORE_LOW':
+                    return (a.overallScore ?? 999) - (b.overallScore ?? 999);
+                case 'NEWEST':
+                default:
+                    return new Date(b.createdAt) - new Date(a.createdAt);
+            }
+        });
+
+        return result;
+    }, [reviews, providerFilter, sortBy]);
+
     if (loading) return (
         <div className="review-list">
             <div className="loading">Loading your reviews...</div>
@@ -89,85 +122,141 @@ function ReviewList({ onSelectReview }) {
                 </div>
             )}
 
-            <h2>Recent Reviews</h2>
-            <div className="reviews-grid">
-                {reviews.map((review) => {
-                    const badge = getStatusBadge(review.status);
-                    return (
-                        <div
-                            key={review.id}
-                            className="review-card"
-                            onClick={() => review.status === 'COMPLETED' && onSelectReview(review.id)}
-                            style={{ cursor: review.status === 'COMPLETED' ? 'pointer' : 'default' }}
+            <div className="list-header-row">
+                <h2>Recent Reviews</h2>
+
+                <div className="list-toolbar">
+                    <div className="provider-filter-pills">
+                        <button
+                            className={`filter-pill ${providerFilter === 'ALL' ? 'active' : ''}`}
+                            onClick={() => setProviderFilter('ALL')}
                         >
-                            <div className="review-header">
-                                <span className={`status-badge ${badge.className}`}>
-                                    {badge.label}
-                                </span>
-                                <span className="review-date">
-                                    {new Date(review.createdAt).toLocaleDateString('en-GB', {
-                                        day: '2-digit', month: '2-digit', year: 'numeric'
-                                    })} — {new Date(review.createdAt).toLocaleTimeString('en-GB', {
-                                    hour: '2-digit', minute: '2-digit'
-                                })}
-                                </span>
+                            All
+                        </button>
+                        {availableProviders.map((p) => {
+                            const meta = PROVIDER_META[p] || { label: p, icon: '' };
+                            const count = reviews.filter(r => r.provider === p).length;
+                            const disabled = count === 0;
+                            return (
                                 <button
-                                    className="delete-btn"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setDeleteConfirmId(review.id);
-                                    }}
-                                    title="Delete review"
+                                    key={p}
+                                    className={`filter-pill ${providerFilter === p ? 'active' : ''} ${disabled ? 'disabled' : ''}`}
+                                    onClick={() => !disabled && setProviderFilter(p)}
+                                    disabled={disabled}
+                                    title={disabled ? 'No reviews with this provider yet' : undefined}
                                 >
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                         stroke="currentColor" strokeWidth="2">
-                                        <polyline points="3 6 5 6 21 6"/>
-                                        <path d="M19 6l-1 14H6L5 6"/>
-                                        <path d="M10 11v6M14 11v6"/>
-                                        <path d="M9 6V4h6v2"/>
-                                    </svg>
+                                    {meta.icon} {meta.label}
                                 </button>
-                            </div>
+                            );
+                        })}
+                    </div>
 
-                            <div className="repo-url">
-                                {review.repoUrl.split('/').slice(-2).join('/')}
-                            </div>
-
-                            {review.status === 'COMPLETED' && (
-                                <>
-                                    <div className={`score-display ${getScoreClass(review.overallScore)}`}>
-                                        Score: {review.overallScore}/100
-                                    </div>
-                                    <div className="stats-row">
-                                        <div className="stat">
-                                            <span className="stat-label">Files:</span>
-                                            <span className="stat-value">{review.filesReviewed}</span>
-                                        </div>
-                                        <div className="stat">
-                                            <span className="stat-label">Bugs:</span>
-                                            <span className="stat-value bug">{review.totalBugs}</span>
-                                        </div>
-                                        <div className="stat">
-                                            <span className="stat-label">Security:</span>
-                                            <span className="stat-value security">{review.totalSecurityIssues}</span>
-                                        </div>
-                                        <div className="stat">
-                                            <span className="stat-label">Style:</span>
-                                            <span className="stat-value style">{review.totalStyleIssues}</span>
-                                        </div>
-                                    </div>
-                                </>
-                            )}
-
-                            {review.status === 'FAILED' && (
-                                <div className="error-message">
-                                    Review failed. Please check your API key and try again.
-                                </div>
-                            )}
-                        </div>
-                    );
-                })}
+                    <select
+                        className="sort-select"
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                    >
+                        <option value="NEWEST">Newest first</option>
+                        <option value="OLDEST">Oldest first</option>
+                        <option value="SCORE_HIGH">Score: High to low</option>
+                        <option value="SCORE_LOW">Score: Low to high</option>
+                    </select>
+                </div>
             </div>
+
+            {visibleReviews.length === 0 ? (
+                <div className="empty-state">
+                    <h3>No reviews match this filter</h3>
+                    <p>Try a different provider or clear the filter.</p>
+                </div>
+            ) : (
+                <div className="reviews-grid">
+                    {visibleReviews.map((review) => {
+                        const badge = getStatusBadge(review.status);
+                        const providerMeta = PROVIDER_META[review.provider];
+                        return (
+                            <div
+                                key={review.id}
+                                className="review-card"
+                                onClick={() => review.status === 'COMPLETED' && onSelectReview(review.id)}
+                                style={{ cursor: review.status === 'COMPLETED' ? 'pointer' : 'default' }}
+                            >
+                                <div className="review-header">
+                                    <span className={`status-badge ${badge.className}`}>
+                                        {badge.label}
+                                    </span>
+                                    <span className="review-date">
+                                        {new Date(review.createdAt).toLocaleDateString('en-GB', {
+                                            day: '2-digit', month: '2-digit', year: 'numeric'
+                                        })} — {new Date(review.createdAt).toLocaleTimeString('en-GB', {
+                                        hour: '2-digit', minute: '2-digit'
+                                    })}
+                                    </span>
+                                    <button
+                                        className="delete-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setDeleteConfirmId(review.id);
+                                        }}
+                                        title="Delete review"
+                                    >
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" strokeWidth="2">
+                                            <polyline points="3 6 5 6 21 6"/>
+                                            <path d="M19 6l-1 14H6L5 6"/>
+                                            <path d="M10 11v6M14 11v6"/>
+                                            <path d="M9 6V4h6v2"/>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div className="repo-url">
+                                    {review.repoUrl.split('/').slice(-2).join('/')}
+                                </div>
+
+                                {review.status === 'COMPLETED' && (
+                                    <>
+                                        <div className="score-row">
+                                            <div className={`score-display ${getScoreClass(review.overallScore)}`}>
+                                                Score: {review.overallScore}/100
+                                            </div>
+                                            {providerMeta && (
+                                                <span className="provider-chip">
+                                                    {providerMeta.icon} {providerMeta.label}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="stats-row">
+                                            <div className="stat">
+                                                <span className="stat-label">Files:</span>
+                                                <span className="stat-value">{review.filesReviewed}</span>
+                                            </div>
+                                            <div className="stat">
+                                                <span className="stat-label">Bugs:</span>
+                                                <span className="stat-value bug">{review.totalBugs}</span>
+                                            </div>
+                                            <div className="stat">
+                                                <span className="stat-label">Security:</span>
+                                                <span className="stat-value security">{review.totalSecurityIssues}</span>
+                                            </div>
+                                            <div className="stat">
+                                                <span className="stat-label">Style:</span>
+                                                <span className="stat-value style">{review.totalStyleIssues}</span>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+
+                                {review.status === 'FAILED' && (
+                                    <div className="error-message">
+                                        Review failed. Please check your API key and try again.
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }
