@@ -343,3 +343,72 @@
 :root[data-theme="light"] .show-code-btn {
     background: #3B5BDB;
 }
+
+.code-viewer {
+    background: #0d1117;
+    border-radius: 8px;
+    margin: 16px 0;
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-family: 'SFMono-Regular', Consolas, Menlo, monospace;
+    font-size: 13px;
+}
+
+.code-pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.code-line-group {
+    transition: background 0.3s ease;
+}
+
+.code-line-group.active-line {
+    background: rgba(255, 235, 59, 0.15) !important;
+}
+
+.code-line {
+    display: flex;
+    padding: 1px 8px;
+}
+
+.line-number {
+    flex-shrink: 0;
+    width: 40px;
+    text-align: right;
+    margin-right: 12px;
+    color: #6e7681;
+    user-select: none;
+}
+
+.line-content {
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #c9d1d9;
+}
+
+.line-annotation {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 4px 8px 4px 52px;
+    font-family: system-ui, sans-serif;
+    font-size: 12.5px;
+    line-height: 1.4;
+    background: rgba(255,255,255,0.03);
+}
+
+.annotation-badge {
+    flex-shrink: 0;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.annotation-text {
+    color: #adbac7;
+}

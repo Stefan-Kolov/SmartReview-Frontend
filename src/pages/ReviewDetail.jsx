@@ -7,6 +7,7 @@ function ReviewDetail({ reviewId, onBack }) {
     const [loading, setLoading] = useState(true);
     const [selectedFile, setSelectedFile] = useState(null);
     const [showCode, setShowCode] = useState(false);
+    const [highlightedLine, setHighlightedLine] = useState(null);
     const [filters, setFilters] = useState({
         category: 'ALL',
         severity: 'ALL'
@@ -19,6 +20,7 @@ function ReviewDetail({ reviewId, onBack }) {
 
     useEffect(() => {
         setShowCode(false);
+        setHighlightedLine(null);
     }, [selectedFile]);
 
     const loadReview = async () => {
@@ -67,6 +69,16 @@ function ReviewDetail({ reviewId, onBack }) {
             const severityMatch = filters.severity === 'ALL' || issue.severity === filters.severity;
             return categoryMatch && severityMatch;
         });
+    };
+
+    const jumpToLine = (lineNumber) => {
+        if (!lineNumber) return;
+        setShowCode(true);
+        setHighlightedLine(lineNumber);
+        setTimeout(() => {
+            const el = document.getElementById(`code-line-${lineNumber}`);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 50);
     };
 
     if (loading) {
@@ -181,6 +193,7 @@ function ReviewDetail({ reviewId, onBack }) {
                                     content={selectedFile.content}
                                     issues={selectedFile.issues}
                                     getCategoryIcon={getCategoryIcon}
+                                    highlightedLine={highlightedLine}
                                 />
                             )}
 
@@ -212,7 +225,12 @@ function ReviewDetail({ reviewId, onBack }) {
                                     <div className="no-issues">No issues found with current filters</div>
                                 ) : (
                                     filteredIssues.map((issue) => (
-                                        <div key={issue.id} className="issue-card">
+                                        <div
+                                            key={issue.id}
+                                            className="issue-card"
+                                            onClick={() => jumpToLine(issue.lineNumber)}
+                                            style={{ cursor: issue.lineNumber ? 'pointer' : 'default' }}
+                                        >
                                             <div className="issue-header">
                                                 <span className="issue-category">
                                                     {getCategoryIcon(issue.category)} {issue.category}
@@ -247,7 +265,7 @@ function ReviewDetail({ reviewId, onBack }) {
     );
 }
 
-function CodeViewer({ content, issues, getCategoryIcon }) {
+function CodeViewer({ content, issues, getCategoryIcon, highlightedLine }) {
     const lines = content.split('\n');
 
     const lineIssueMap = {};
@@ -258,40 +276,52 @@ function CodeViewer({ content, issues, getCategoryIcon }) {
         }
     });
 
-    const getLineStyle = (lineNum) => {
-        const lineIssues = lineIssueMap[lineNum] || [];
-        if (lineIssues.some(i => i.severity === 'HIGH'))   return { background: 'rgba(211,47,47,0.15)', borderLeft: '3px solid #d32f2f' };
-        if (lineIssues.some(i => i.severity === 'MEDIUM')) return { background: 'rgba(245,124,0,0.12)', borderLeft: '3px solid #f57c00' };
-        if (lineIssues.length > 0)                         return { background: 'rgba(25,118,210,0.10)', borderLeft: '3px solid #1976d2' };
-        return { borderLeft: '3px solid transparent' };
-    };
+    const severityRank = { HIGH: 3, MEDIUM: 2, LOW: 1 };
+    const topSeverity = (lineIssues) =>
+        lineIssues.reduce((max, i) => (severityRank[i.severity] > severityRank[max] ? i.severity : max), 'LOW');
 
-    const getHintStyle = (lineIssues) => {
-        if (lineIssues.some(i => i.severity === 'HIGH'))   return { background: 'rgba(211,47,47,0.25)', borderLeft: '3px solid #d32f2f', color: '#ff8a80' };
-        if (lineIssues.some(i => i.severity === 'MEDIUM')) return { background: 'rgba(245,124,0,0.20)', borderLeft: '3px solid #f57c00', color: '#ffcc80' };
-        return { background: 'rgba(25,118,210,0.18)', borderLeft: '3px solid #1976d2', color: '#82b1ff' };
+    const severityColors = {
+        HIGH:   { bg: 'rgba(211,47,47,0.12)',  border: '#d32f2f', text: '#ffb4ab' },
+        MEDIUM: { bg: 'rgba(245,124,0,0.10)',  border: '#f57c00', text: '#ffcc80' },
+        LOW:    { bg: 'rgba(25,118,210,0.09)', border: '#1976d2', text: '#90caf9' }
     };
 
     return (
         <div className="code-viewer">
-            <pre>
+            <pre className="code-pre">
                 {lines.map((line, index) => {
                     const lineNum = index + 1;
                     const lineIssues = lineIssueMap[lineNum] || [];
+                    const hasIssue = lineIssues.length > 0;
+                    const sev = hasIssue ? topSeverity(lineIssues) : null;
+                    const colors = sev ? severityColors[sev] : null;
+                    const isActive = highlightedLine === lineNum;
 
                     return (
-                        <div key={lineNum}>
-                            <div className="code-line" style={getLineStyle(lineNum)}>
+                        <div
+                            key={lineNum}
+                            id={`code-line-${lineNum}`}
+                            className={`code-line-group ${isActive ? 'active-line' : ''}`}
+                            style={
+                                hasIssue
+                                    ? { borderLeft: `3px solid ${colors.border}`, background: colors.bg }
+                                    : { borderLeft: '3px solid transparent' }
+                            }
+                        >
+                            <div className="code-line">
                                 <span className="line-number">{lineNum}</span>
                                 <span className="line-content">{line || ' '}</span>
                             </div>
-                            {lineIssues.map((issue, i) => (
-                                <div key={i} className="line-annotation" style={getHintStyle(lineIssues)}>
-                                    <span className="annotation-icon">{getCategoryIcon(issue.category)}</span>
-                                    <span className="annotation-badge">{issue.severity}</span>
-                                    <span className="annotation-text">{issue.description}</span>
-                                </div>
-                            ))}
+                            {lineIssues.map((issue, i) => {
+                                const c = severityColors[issue.severity] || severityColors.LOW;
+                                return (
+                                    <div key={i} className="line-annotation" style={{ color: c.text }}>
+                                        <span className="annotation-icon">{getCategoryIcon(issue.category)}</span>
+                                        <span className="annotation-badge" style={{ background: c.border }}>{issue.severity}</span>
+                                        <span className="annotation-text">{issue.description}</span>
+                                    </div>
+                                );
+                            })}
                         </div>
                     );
                 })}
